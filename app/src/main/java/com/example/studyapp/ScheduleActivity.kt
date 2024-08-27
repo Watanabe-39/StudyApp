@@ -5,10 +5,10 @@ import android.widget.CalendarView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
-class ScaduleActivity : AppCompatActivity() {
+class ScheduleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_scadule)
+        setContentView(R.layout.activity_schedule)
 
 //        カレンダー表示
         val calendarView = findViewById<CalendarView>(R.id.calendarView)

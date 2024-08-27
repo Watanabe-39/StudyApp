@@ -25,7 +25,7 @@
         <activity android:name=".TodoActivity"
             android:exported="false">
         </activity>
-        <activity android:name=".ScaduleActivity"
+        <activity android:name=".ScheduleActivity"
             android:exported="false">
         </activity>
         <activity android:name=".StudyTimeActivity"

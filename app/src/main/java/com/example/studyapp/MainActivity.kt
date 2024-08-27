@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-//        画面遷移
+//        Screen transition
         val todo_navigate_btn = findViewById<Button>(R.id.todo_navigate_button)
         val scadule_navigate_btn = findViewById<Button>(R.id.scadule_navigate_button)
         val study_time_navigate_btn = findViewById<Button>(R.id.study_time_navigate_button)
@@ -31,14 +31,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         scadule_navigate_btn.setOnClickListener {
-            val intent = Intent(this, ScaduleActivity::class.java)
+            val intent = Intent(this, ScheduleActivity::class.java)
             startActivity(intent)
         }
         study_time_navigate_btn.setOnClickListener {
             val intent = Intent(this, StudyTimeActivity::class.java)
             startActivity(intent)
         }
-
 
     }
 
