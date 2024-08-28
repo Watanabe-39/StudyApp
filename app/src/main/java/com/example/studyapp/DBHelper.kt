@@ -30,7 +30,7 @@ class DBHelper(
         private const val SQL_CREATE_STUDY_SESSIONS_TABLE = """
             CREATE TABLE study_sessions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                study_date TEXT,
+                study_date DATE DEFAULT CURRENT_TIMESTAMP,
                 total_minutes INTEGER
             )
         """

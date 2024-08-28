@@ -6,6 +6,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class TodoActivity : AppCompatActivity() {
@@ -18,6 +19,9 @@ class TodoActivity : AppCompatActivity() {
     private lateinit var toDoEditText: EditText
     private lateinit var saveButton: Button
     private lateinit var todoListView: ListView
+    private lateinit var deleteButton: Button
+
+    private var selectedTask: String? = null // 選択されたタスクを保存する変数
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +45,29 @@ class TodoActivity : AppCompatActivity() {
                 refreshTaskList()
             }
         }
+
+        // 削除ボタンのクリックリスナー
+        deleteButton.setOnClickListener {
+            selectedTask?.let {
+                deleteTask(it)
+                refreshTaskList()
+                selectedTask = null // 削除後に選択をクリア
+            } ?: run {
+                Toast.makeText(this, "削除するタスクを選択してください", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        todoListView.setOnItemClickListener { _, _, position, _ ->
+            selectedTask = todoListAdapter.getItem(position)
+            Toast.makeText(this, "$selectedTask を選択しました", Toast.LENGTH_SHORT).show()
+        }
+
+    }
+
+    private fun deleteTask(task: String) {
+        databaseManager.openDatabase().use { db ->
+            db.delete("tasks", "task_name = ?", arrayOf(task))
+        }
     }
 
     // UIコンポーネントの初期化
@@ -48,6 +75,7 @@ class TodoActivity : AppCompatActivity() {
         toDoEditText = findViewById(R.id.ToDo_EditText)
         saveButton = findViewById(R.id.save_button)
         todoListView = findViewById(R.id.todo_list_view)
+        deleteButton = findViewById(R.id.delete_button)
     }
 
     // タスクリストの更新と表示
