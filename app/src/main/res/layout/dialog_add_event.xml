@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditText
+        android:id="@+id/eventNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="イベント名"
+        tools:ignore="MissingConstraints" />
+
+    <EditText
+        android:id="@+id/eventDescriptionEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="説明"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@id/eventNameEditText"/>
+
+    <EditText
+        android:id="@+id/startTimeEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="開始時間 (HH:mm)"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@id/eventDescriptionEditText"/>
+
+    <EditText
+        android:id="@+id/endTimeEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="終了時間 (HH:mm)"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@id/startTimeEditText"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
