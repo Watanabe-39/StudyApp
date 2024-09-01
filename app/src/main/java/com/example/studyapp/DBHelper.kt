@@ -72,5 +72,22 @@ class DBHelper(
 
         return tables
     }
+
+    // 今日の勉強時間を取得する
+    // 引数 : 科目名
+    fun getTodayStudyTime(s: String): Int {
+        val db = readableDatabase
+        var totalMinutesToday = 0
+
+        val cursor = db.rawQuery("SELECT SUM(total_minutes) AS total_minutes_today FROM ${s} WHERE DATE(study_date) = DATE('now', 'localtime')", null)
+        cursor.use {
+            if (it.moveToFirst()) {
+                // total_minutes_todayがnullの場合、0を返すようにする
+                totalMinutesToday = it.getInt(it.getColumnIndexOrThrow("total_minutes_today"))
+            }
+        }
+
+        return totalMinutesToday
+    }
 }
 
