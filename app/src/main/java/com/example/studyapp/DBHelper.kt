@@ -27,8 +27,8 @@ class DBHelper(
                 description TEXT
             )
         """
-        private const val SQL_CREATE_STUDY_SESSIONS_TABLE = """
-            CREATE TABLE study_sessions (
+        private const val SQL_CREATE_STUDY_TABLE_TEMPLATE = """
+            CREATE TABLE IF NOT EXISTS %s (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 study_date DATE DEFAULT CURRENT_TIMESTAMP,
                 total_minutes INTEGER
@@ -40,7 +40,6 @@ class DBHelper(
         db.apply {
             execSQL(SQL_CREATE_TASKS_TABLE)
             execSQL(SQL_CREATE_EVENTS_TABLE)
-            execSQL(SQL_CREATE_STUDY_SESSIONS_TABLE)
         }
     }
 
@@ -48,8 +47,30 @@ class DBHelper(
         db.apply {
             execSQL("DROP TABLE IF EXISTS tasks")
             execSQL("DROP TABLE IF EXISTS events")
-            execSQL("DROP TABLE IF EXISTS study_sessions")
         }
         onCreate(db)
     }
+
+    // 指定された名前で勉強時間管理のテーブルを作成
+    fun createStudyTable(tableName: String) {
+        val db = writableDatabase
+        val createTableSQL = String.format(SQL_CREATE_STUDY_TABLE_TEMPLATE, tableName)
+        db.execSQL(createTableSQL)
+    }
+
+    // DB内に存在する勉強時間管理テーブルの一覧を取得する
+    fun getStudyTables(): List<String> {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name != 'android_metadata' AND name != 'sqlite_sequence' AND name != 'tasks' AND name != 'events'", null)
+        val tables = mutableListOf<String>()
+
+        cursor.use {
+            while (it.moveToNext()) {
+                tables.add(it.getString(0))
+            }
+        }
+
+        return tables
+    }
 }
+

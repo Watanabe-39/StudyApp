@@ -1,23 +1,22 @@
 package com.example.studyapp
 
+import android.app.AlertDialog
 import android.content.ContentValues
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class StudyTimeActivity : AppCompatActivity() {
     // データベース管理クラスのインスタンス
-    private lateinit var databaseManager: DatabaseManager
-
-    private lateinit var timeListAdapter: ArrayAdapter<String>
+    private lateinit var dbHelper: DBHelper
 
     // UIコンポーネント
-    private lateinit var time_EditText: EditText
-    private lateinit var time_save_button: Button
-    private lateinit var time_list_view: ListView
+    private lateinit var addButton: Button
+    private lateinit var subjectListView: ListView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,56 +25,87 @@ class StudyTimeActivity : AppCompatActivity() {
         // UIコンポーネントの初期化
         initializeUI()
 
-        // データベースマネージャーの初期化
-        databaseManager = DatabaseManager.getInstance(this)
+        // DBHelperの初期化
+        dbHelper = DBHelper(this, "study_app.db", 1)
 
-        // DBの内容を表示
-        refreshTimeList()
+        addButton.setOnClickListener {
+            showAddSubjectDialog()
+        }
 
-        // 保存ボタンのクリックリスナー
-        time_save_button.setOnClickListener {
-            val studyTime = time_EditText.text.toString().toIntOrNull()
-            if (studyTime != null) {
-                insertTime(studyTime)
-                time_EditText.text.clear()
-                refreshTimeList() // データの更新
-            }
+        // テーブルリストの表示
+        refreshSubjectList()
+
+        // テーブルリストの要素のイベントハンドラを設定
+        subjectListView.setOnItemClickListener { parent, view, position, id ->
+            val selectedTable = parent.getItemAtPosition(position) as String    // クリックした要素のテキストを取得、格納
+            Toast.makeText(this, "$selectedTable が選択されました", Toast.LENGTH_SHORT).show()
+            // ここに選択されたアイテムに対する処理を追加
+            showAddMinutesDialog(selectedTable)
         }
     }
 
-    private fun refreshTimeList() {
-        val times = getTime()
-        timeListAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, times)
-        time_list_view.adapter = timeListAdapter
-    }
 
-    private fun getTime(): List<String> {
-        val times = mutableListOf<String>()
-        databaseManager.openDatabase().use { db ->
-            val cursor = db.query("study_sessions", arrayOf("total_minutes"), null, null, null, null, null)
-            cursor.use {
-                while (it.moveToNext()) {
-                    val minutes = it.getInt(it.getColumnIndexOrThrow("total_minutes"))
-                    times.add("$minutes 分")
-                }
-            }
-        }
-        return times
-    }
-
-    private fun insertTime(studyTime: Int) {
-        databaseManager.openDatabase().use { db ->
-            val values = ContentValues().apply {
-                put("total_minutes", studyTime)
-            }
-            db.insert("study_sessions", null, values)
-        }
+    private fun refreshSubjectList() {
+        val studyTables = dbHelper.getStudyTables()
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, studyTables)
+        subjectListView.adapter = adapter
     }
 
     private fun initializeUI() {
-        time_EditText = findViewById(R.id.time_EditText)
-        time_save_button = findViewById(R.id.time_save_button)
-        time_list_view = findViewById(R.id.time_list_view)
+        addButton = findViewById(R.id.add_subject_button)
+        subjectListView = findViewById(R.id.subject_list_view)
+    }
+
+    private fun showAddMinutesDialog(selectedTable: String) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_minutes, null)
+        val db = dbHelper.writableDatabase
+        val studyTimeEditText = dialogView.findViewById<EditText>(R.id.studyTimeEdit)
+
+        AlertDialog.Builder(this)
+            .setTitle("勉強時間")
+            .setView(dialogView)
+            .setPositiveButton("保存") { _, _ ->
+                val studyMinutes = studyTimeEditText.text.toString()
+
+                if (studyMinutes.isNotEmpty()) {
+                    val values = ContentValues().apply {
+                        put("total_minutes", studyMinutes)
+                    }
+                    db.insert(selectedTable, null, values)
+                } else {
+                    Toast.makeText(this, "勉強時間を入力してください", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("キャンセル", null)
+            .show()
+
+    }
+
+    private fun showAddSubjectDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_subject, null)
+        val subjectNameEditText = dialogView.findViewById<EditText>(R.id.subjectNameEditText)
+
+        AlertDialog.Builder(this)
+            .setTitle("科目を追加")
+            .setView(dialogView)
+            .setPositiveButton("保存") { _, _ ->
+                val subjectName = subjectNameEditText.text.toString()
+
+                if (subjectName.isNotEmpty()) {
+                    // 予約語が入力された時の処理
+                    if (subjectName == "tasks" || subjectName == "events"){
+                        Toast.makeText(this, "この名前は使えません", Toast.LENGTH_SHORT).show()
+                    }
+                    else{
+                        dbHelper.createStudyTable(subjectName)
+                        refreshSubjectList()  // リストを更新
+                        Toast.makeText(this, "科目 '$subjectName' が追加されました", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this, "科目名を入力してください", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("キャンセル", null)
+            .show()
     }
 }
-
