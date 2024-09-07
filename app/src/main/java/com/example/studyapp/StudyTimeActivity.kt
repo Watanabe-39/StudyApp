@@ -9,6 +9,12 @@ import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.github.mikephil.charting.charts.PieChart
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.formatter.PercentFormatter
+import com.github.mikephil.charting.utils.ColorTemplate
 
 class StudyTimeActivity : AppCompatActivity() {
     // データベース管理クラスのインスタンス
@@ -17,6 +23,10 @@ class StudyTimeActivity : AppCompatActivity() {
     // UIコンポーネント
     private lateinit var addButton: Button
     private lateinit var subjectListView: ListView
+    private lateinit var pieChartStudyTime: PieChart
+
+    // ListViewにセットされているアダプター
+//    val adapterListView = subjectListView.adapter as ArrayAdapter<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +52,79 @@ class StudyTimeActivity : AppCompatActivity() {
             // ここに選択されたアイテムに対する処理を追加
             showAddMinutesDialog(selectedTable)
         }
+
+        // 今日の科目ごとの勉強時間の割合を表示
+        showPieChartStudyTime()
+
     }
 
+    private fun showPieChartStudyTime() {
+        // 参考:  https://qiita.com/c60evaporator/items/14e63d22d860b73e6f22
+
+        val dimensions = ArrayList<String>()    // 分割円の名称
+        val values = ArrayList<Float>()   // 分割円の大きさ
+
+        var totalTime = 0f   // 総勉強時間 円グラフの割合を算出するため
+
+        // subjectListViewの各要素についてループ
+        val adapter = subjectListView.adapter as? ArrayAdapter<*>
+        adapter?.let {
+            for (i in 0 until it.count) {
+                val item: String = (it.getItem(i) ?: continue).toString() // 科目名
+                val t: Int = dbHelper.getTodayStudyTime(item)   // 科目の勉強時間
+                if (t > 0) {
+                    dimensions.add(item)
+                    values.add(t.toFloat())
+                    totalTime += t
+                }
+            }
+        }
+
+        // データが存在する場合のみグラフを描画
+        if (totalTime > 0) {
+            // Entryにデータ格納
+            val entryList = values.mapIndexed { index, value ->
+                PieEntry(value / totalTime, dimensions[index])
+            }
+
+            // PieDataSetにデータ格納
+            val pieDataSet = PieDataSet(entryList, "Study Time")
+            // DataSetのフォーマット指定
+            pieDataSet.colors = ColorTemplate.COLORFUL_COLORS.toList()
+
+            // PieDataにPieDataSet格納
+            val pieData = PieData(pieDataSet)
+            // 値のフォーマット設定
+            pieData.setValueFormatter(PercentFormatter(pieChartStudyTime))
+            pieData.setValueTextSize(11f)
+
+            // pieChartStudyTimeにPieData格納
+            pieChartStudyTime.data = pieData
+            // Chartのフォーマット指定
+            pieChartStudyTime.apply {
+                description.isEnabled = false
+                legend.isEnabled = true
+                setUsePercentValues(true)
+                setEntryLabelTextSize(12f)
+                centerText = "Today's Study Time"
+                setCenterTextSize(16f)
+            }
+            // pieChartStudyTimeを更新
+            pieChartStudyTime.invalidate()
+        } else {
+            // データがない場合、グラフをクリアして中央にメッセージを表示
+            pieChartStudyTime.clear()
+            pieChartStudyTime.centerText = "No study data for today"
+            pieChartStudyTime.invalidate()
+        }
+
+        // 大きさ設定
+        val params = pieChartStudyTime.layoutParams
+        params.width = 800  // ピクセル単位
+        params.height = 800 // ピクセル単位
+        pieChartStudyTime.layoutParams = params
+
+    }
 
     private fun refreshSubjectList() {
         val studyTables = dbHelper.getStudyTables()
@@ -54,6 +135,7 @@ class StudyTimeActivity : AppCompatActivity() {
     private fun initializeUI() {
         addButton = findViewById(R.id.add_subject_button)
         subjectListView = findViewById(R.id.subject_list_view)
+        pieChartStudyTime = findViewById<PieChart>(R.id.pieChartStudyTime)
     }
 
     private fun showAddMinutesDialog(selectedTable: String) {
