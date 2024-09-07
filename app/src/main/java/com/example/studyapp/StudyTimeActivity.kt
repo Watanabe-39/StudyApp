@@ -2,6 +2,7 @@ package com.example.studyapp
 
 import android.app.AlertDialog
 import android.content.ContentValues
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -106,8 +107,9 @@ class StudyTimeActivity : AppCompatActivity() {
                 legend.isEnabled = true
                 setUsePercentValues(true)
                 setEntryLabelTextSize(12f)
-                centerText = "Today's Study Time"
+                centerText = "今日の勉強$totalTime" + "分"
                 setCenterTextSize(16f)
+                legend.textColor = Color.YELLOW
             }
             // pieChartStudyTimeを更新
             pieChartStudyTime.invalidate()

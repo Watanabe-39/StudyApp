@@ -30,7 +30,7 @@ class DBHelper(
         private const val SQL_CREATE_STUDY_TABLE_TEMPLATE = """
             CREATE TABLE IF NOT EXISTS %s (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                study_date DATE DEFAULT CURRENT_TIMESTAMP,
+                study_date DATE DEFAULT (datetime(CURRENT_TIMESTAMP, '+9 hours')),
                 total_minutes INTEGER
             )
         """
