@@ -35,6 +35,7 @@ android {
     }
 }
 
+// 参考: https://akira-watson.com/android/achartengine.html#google_vignette
 dependencies {
 
     implementation(libs.androidx.core.ktx)
