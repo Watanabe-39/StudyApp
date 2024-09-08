@@ -155,14 +155,18 @@ class StudyTimeActivity : AppCompatActivity() {
                     val values = ContentValues().apply {
                         put("total_minutes", studyMinutes)
                     }
-                    db.insert(selectedTable, null, values)
+                    val result = db.insert(selectedTable, null, values)
+                    if (result != -1L){
+                        showPieChartStudyTime() // ここで円グラフを更新
+                    } else {
+                        Toast.makeText(this, "保存に失敗しました", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
                     Toast.makeText(this, "勉強時間を入力してください", Toast.LENGTH_SHORT).show()
                 }
             }
             .setNegativeButton("キャンセル", null)
             .show()
-
     }
 
     private fun showAddSubjectDialog() {
