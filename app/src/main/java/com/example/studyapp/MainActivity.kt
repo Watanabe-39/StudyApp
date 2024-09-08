@@ -2,22 +2,18 @@ package com.example.studyapp
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ListView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.data.PieData
-import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.data.PieEntry
-import com.github.mikephil.charting.formatter.PercentFormatter
-import com.github.mikephil.charting.utils.ColorTemplate
+import android.widget.ArrayAdapter
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var dbHelper: DBHelper
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +25,9 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-//        Screen transition
+        dbHelper = DBHelper(this, "study_app.db", 1)
+
+        // Screen transition
         val todo_navigate_btn = findViewById<Button>(R.id.todo_navigate_button)
         val scadule_navigate_btn = findViewById<Button>(R.id.scadule_navigate_button)
         val study_time_navigate_btn = findViewById<Button>(R.id.study_time_navigate_button)

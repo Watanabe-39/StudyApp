@@ -1,6 +1,7 @@
 package com.example.studyapp
 
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
@@ -90,9 +91,27 @@ class DBHelper(
         return totalMinutesToday
     }
 
-    // 日ごとの総勉強時間を取得する
-    fun getAllDayStudyTime(){
 
+    // 日ごとの勉強時間を取得
+    fun getAggregatedMinutes(): Cursor {
+        val db = this.readableDatabase
+        val tableNames = getStudyTables()
+        val unionQuery = buildUnionQuery(tableNames)
+        return db.rawQuery(unionQuery, null)
     }
+    // 各テーブルに対するクエリを生成
+    fun buildUnionQuery(tableNames: List<String>): String {
+        val queryParts = tableNames.map { tableName ->
+            "SELECT study_date, total_minutes FROM $tableName"
+        }
+        val unionQuery = queryParts.joinToString(" UNION ALL ")
+        return """
+        SELECT study_date, SUM(total_minutes) as total_minutes
+        FROM ($unionQuery)
+        GROUP BY study_date
+        ORDER BY study_date
+        """
+    }
+
 }
 
