@@ -89,5 +89,10 @@ class DBHelper(
 
         return totalMinutesToday
     }
+
+    // 日ごとの総勉強時間を取得する
+    fun getAllDayStudyTime(){
+
+    }
 }
 

@@ -26,14 +26,10 @@ class StudyTimeActivity : AppCompatActivity() {
     private lateinit var subjectListView: ListView
     private lateinit var pieChartStudyTime: PieChart
 
-    // ListViewにセットされているアダプター
-//    val adapterListView = subjectListView.adapter as ArrayAdapter<String>
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_study_time)
 
-        // UIコンポーネントの初期化
         initializeUI()
 
         // DBHelperの初期化
@@ -43,7 +39,6 @@ class StudyTimeActivity : AppCompatActivity() {
             showAddSubjectDialog()
         }
 
-        // テーブルリストの表示
         refreshSubjectList()
 
         // テーブルリストの要素のイベントハンドラを設定
@@ -54,11 +49,18 @@ class StudyTimeActivity : AppCompatActivity() {
             showAddMinutesDialog(selectedTable)
         }
 
-        // 今日の科目ごとの勉強時間の割合を表示
         showPieChartStudyTime()
 
     }
 
+    // UIコンポーネントの初期化
+    private fun initializeUI() {
+        addButton = findViewById(R.id.add_subject_button)
+        subjectListView = findViewById(R.id.subject_list_view)
+        pieChartStudyTime = findViewById<PieChart>(R.id.pieChartStudyTime)
+    }
+
+    // 今日の科目ごとの勉強時間の割合を表示
     private fun showPieChartStudyTime() {
         // 参考:  https://qiita.com/c60evaporator/items/14e63d22d860b73e6f22
 
@@ -128,16 +130,11 @@ class StudyTimeActivity : AppCompatActivity() {
 
     }
 
+    // テーブルのリストを表示
     private fun refreshSubjectList() {
         val studyTables = dbHelper.getStudyTables()
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, studyTables)
         subjectListView.adapter = adapter
-    }
-
-    private fun initializeUI() {
-        addButton = findViewById(R.id.add_subject_button)
-        subjectListView = findViewById(R.id.subject_list_view)
-        pieChartStudyTime = findViewById<PieChart>(R.id.pieChartStudyTime)
     }
 
     private fun showAddMinutesDialog(selectedTable: String) {

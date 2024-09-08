@@ -9,14 +9,14 @@
         android:id="@+id/eventNameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="イベント名"
+        android:hint="タイトル"
         tools:ignore="MissingConstraints" />
 
     <EditText
         android:id="@+id/eventDescriptionEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="説明"
+        android:hint="メモ"
         tools:ignore="MissingConstraints"
         app:layout_constraintTop_toBottomOf="@id/eventNameEditText"/>
 
@@ -24,9 +24,10 @@
         android:id="@+id/startTimeEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="開始時間 (HH:mm)"
+        android:hint="開始時刻 (HH:mm)"
         tools:ignore="MissingConstraints"
-        app:layout_constraintTop_toBottomOf="@id/eventDescriptionEditText"/>
+        app:layout_constraintTop_toBottomOf="@id/eventDescriptionEditText"
+        android:inputType="time"/>
 
     <EditText
         android:id="@+id/endTimeEditText"

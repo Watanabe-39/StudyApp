@@ -9,11 +9,13 @@
 
     <Button
         android:id="@+id/add_subject_button"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="追加"
+        android:text="科目を追加"
         android:textSize="18dp"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <ListView
         android:id="@+id/subject_list_view"
@@ -26,7 +28,9 @@
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pieChartStudyTime"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toBottomOf="@id/subject_list_view"/>
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/subject_list_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

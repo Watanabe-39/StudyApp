@@ -9,35 +9,42 @@
     android:orientation="vertical"
     android:layout_gravity="center_vertical">
 
+
+
     <Button
         android:id="@+id/todo_navigate_button"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="55dp"
         android:text="To Do List"
-        android:layout_marginTop= "30dp"/>
+        android:layout_marginTop= "20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <Button
         android:id="@+id/study_time_navigate_button"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="55dp"
         android:text="Study Time"
         app:layout_constraintTop_toBottomOf="@id/todo_navigate_button"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <Button
         android:id="@+id/scadule_navigate_button"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="55dp"
         android:text="Schedule"
         app:layout_constraintTop_toBottomOf="@id/study_time_navigate_button"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="20dp" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
