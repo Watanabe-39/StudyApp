@@ -10,9 +10,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.widget.ArrayAdapter
+import com.github.mikephil.charting.charts.LineChart
+import java.util.Calendar
+import java.util.Date
 
 class MainActivity : AppCompatActivity() {
     private lateinit var dbHelper: DBHelper
+
+    private lateinit var studyTimeLineChart: LineChart
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,6 +31,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         dbHelper = DBHelper(this, "study_app.db", 1)
+        studyTimeLineChart = findViewById(R.id.study_time_lineChart)
+
+        showStudyTimeChart()
 
         // Screen transition
         val todo_navigate_btn = findViewById<Button>(R.id.todo_navigate_button)
@@ -45,6 +53,28 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+    }
+
+    // 直近1週間の勉強時間の折れ線グラフを表示する
+    private fun showStudyTimeChart(){
+        val dateList = getLastWeekDates()
+        // それぞれの日付でgetStudyTimePを呼び出し、
+        // 折れ線グラフを生成する
+
+    }
+
+    // 今日から直近の１週間の日付を取得
+    private fun getLastWeekDates(): List<Date> {
+        val calendar = Calendar.getInstance()
+        val today = calendar.time
+        val dates = mutableListOf<Date>()
+
+        for (i in 0..6) {
+            dates.add(calendar.time)
+            calendar.add(Calendar.DAY_OF_MONTH, -1)
+        }
+
+        return dates.reversed()
     }
 
 }

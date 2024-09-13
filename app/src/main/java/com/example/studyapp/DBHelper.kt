@@ -91,7 +91,6 @@ class DBHelper(
         return totalMinutesToday
     }
 
-
     // 日ごとの勉強時間を取得
     fun getAggregatedMinutes(): Cursor {
         val db = this.readableDatabase
@@ -111,6 +110,28 @@ class DBHelper(
         GROUP BY study_date
         ORDER BY study_date
         """
+    }
+
+    // 特定の日の勉強時間を取得
+    fun getStudyTimeP(d: String): Int {
+        val db = readableDatabase
+        val subjects = getStudyTables()
+
+        var totalTime = 0
+
+        // 現在あるテーブルのそれぞれついてクエリ処理
+        subjects.forEachIndexed { i, item ->
+            val query = "SELECT SUM(total_minutes) FROM $item WHERE study_date = ?"
+            val cursor = db.rawQuery(query, arrayOf(d))
+
+            if (cursor != null && cursor.moveToFirst()) {
+                // カーソルからSUMの結果を取得。getInt(0)は最初の列（SUM結果）を意味する
+                totalTime += cursor.getInt(0)
+            }
+            cursor?.close()
+        }
+
+        return totalTime
     }
 
 }
