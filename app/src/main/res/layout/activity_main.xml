@@ -17,32 +17,38 @@
     <Button
         android:id="@+id/todo_navigate_button"
         android:layout_width="200dp"
-        android:layout_height="55dp"
+        android:layout_height="50dp"
         android:text="To Do List"
         android:layout_marginTop= "20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/study_time_lineChart"/>
+        app:layout_constraintTop_toBottomOf="@id/study_time_lineChart"
+        android:background="@drawable/button_design"
+        app:backgroundTint="@null"/>
 
     <Button
         android:id="@+id/study_time_navigate_button"
         android:layout_width="200dp"
-        android:layout_height="55dp"
+        android:layout_height="50dp"
         android:text="Study Time"
         app:layout_constraintTop_toBottomOf="@id/todo_navigate_button"
         android:layout_marginTop="20dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/button_design"
+        app:backgroundTint="@null"/>
 
     <Button
         android:id="@+id/scadule_navigate_button"
         android:layout_width="200dp"
-        android:layout_height="55dp"
+        android:layout_height="50dp"
         android:text="Schedule"
         app:layout_constraintTop_toBottomOf="@id/study_time_navigate_button"
         android:layout_marginTop="20dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/button_design"
+        app:backgroundTint="@null"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"

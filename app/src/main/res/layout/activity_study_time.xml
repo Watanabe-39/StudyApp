@@ -15,7 +15,9 @@
         android:textSize="18dp"
         tools:ignore="MissingConstraints"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/button_design"
+        app:backgroundTint="@null"/>
 
     <ListView
         android:id="@+id/subject_list_view"
