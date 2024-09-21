@@ -1,6 +1,7 @@
 package com.example.studyapp
 
 import android.content.ContentValues
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -20,6 +21,7 @@ class TodoActivity : AppCompatActivity() {
     private lateinit var saveButton: Button
     private lateinit var todoListView: ListView
     private lateinit var deleteButton: Button
+    private lateinit var navigationSetTasks: Button
 
     private var selectedTask: String? = null // 選択されたタスクを保存する変数
 
@@ -29,6 +31,12 @@ class TodoActivity : AppCompatActivity() {
 
         // UIコンポーネントの初期化
         initializeUI()
+
+        // 近日タスク管理画面への遷移
+        navigationSetTasks.setOnClickListener {
+            val intent = Intent(this, SetTasksActivity::class.java)
+            startActivity(intent)
+        }
 
         // データベースマネージャーの初期化
         databaseManager = DatabaseManager.getInstance(this)
@@ -76,6 +84,7 @@ class TodoActivity : AppCompatActivity() {
         saveButton = findViewById(R.id.save_button)
         todoListView = findViewById(R.id.todo_list_view)
         deleteButton = findViewById(R.id.delete_button)
+        navigationSetTasks = findViewById(R.id.set_tasks)
     }
 
     // タスクリストの更新と表示

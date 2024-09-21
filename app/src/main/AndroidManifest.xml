@@ -31,6 +31,8 @@
         <activity android:name=".StudyTimeActivity"
             android:exported="false">
         </activity>
+        <activity android:name=".SetTasksActivity"
+            android:exported="false"/>
     </application>
 
 </manifest>

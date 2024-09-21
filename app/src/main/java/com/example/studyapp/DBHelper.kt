@@ -15,7 +15,8 @@ class DBHelper(
         private const val SQL_CREATE_TASKS_TABLE = """
             CREATE TABLE tasks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                task_name TEXT
+                task_name TEXT,
+                date TEXT NOT NULL
             )
         """
         private const val SQL_CREATE_EVENTS_TABLE = """
