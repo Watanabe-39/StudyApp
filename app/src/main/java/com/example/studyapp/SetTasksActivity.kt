@@ -79,6 +79,7 @@ class SetTasksActivity : AppCompatActivity(){
                  *     周期的なタスクの自動入力 -> 一度に全部処理するわけにはいかない？
                  *     特定の曜日を選べるようにする
                  *     繰り返し設定の選択を工夫する
+                 *     繰り返すタスクはあとで一括削除、編集ができるとよい
                  * */
 
                 if (taskName.isNotEmpty()) {

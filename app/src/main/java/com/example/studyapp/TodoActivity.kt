@@ -9,6 +9,10 @@ import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Date
 
 class TodoActivity : AppCompatActivity() {
     // データベース管理クラスのインスタンス
@@ -95,19 +99,29 @@ class TodoActivity : AppCompatActivity() {
     }
 
     // データベースからタスクを取得
+    // 正しく動作しない
     private fun getTasks(): List<String> {
         val tasks = mutableListOf<String>()
-        databaseManager.openDatabase().use { db ->
-            val cursor = db.query("tasks", arrayOf("task_name"), null, null, null, null, null)
-            cursor.use {
-                while (it.moveToNext()) {
-                    val taskName = it.getString(it.getColumnIndexOrThrow("task_name"))
+
+        val currentDate = LocalDate.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val formattedDate = currentDate.format(formatter)
+
+        val db = databaseManager.openDatabase()
+        db.use {
+            val cursor = db.rawQuery("SELECT task_name FROM tasks WHERE date = ?", arrayOf(formattedDate))
+            cursor.use { cur ->
+                val taskNameIndex = cur.getColumnIndexOrThrow("task_name")
+                while (cur.moveToNext()) {
+                    val taskName = cur.getString(taskNameIndex)
                     tasks.add(taskName)
                 }
             }
         }
+
         return tasks
     }
+
 
     // データベースにタスクを挿入
     private fun insertTask(task: String) {
