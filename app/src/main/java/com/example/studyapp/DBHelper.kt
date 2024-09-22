@@ -16,6 +16,7 @@ class DBHelper(
             CREATE TABLE tasks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 task_name TEXT,
+                description TEXT,
                 date TEXT NOT NULL
             )
         """
