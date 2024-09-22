@@ -16,6 +16,8 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class StudyTimeActivity : AppCompatActivity() {
     // データベース管理クラスのインスタンス
@@ -148,9 +150,14 @@ class StudyTimeActivity : AppCompatActivity() {
             .setPositiveButton("保存") { _, _ ->
                 val studyMinutes = studyTimeEditText.text.toString()
 
+                val currentDate = Date()
+                val formatter = SimpleDateFormat("yyyy-MM-dd")
+                val formattedDate = formatter.format(currentDate)
+
                 if (studyMinutes.isNotEmpty()) {
                     val values = ContentValues().apply {
                         put("total_minutes", studyMinutes)
+                        put("study_date", formattedDate)
                     }
                     val result = db.insert(selectedTable, null, values)
                     if (result != -1L){

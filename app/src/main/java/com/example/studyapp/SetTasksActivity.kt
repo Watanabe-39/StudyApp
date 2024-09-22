@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatSpinner
 
 class SetTasksActivity : AppCompatActivity(){
     private lateinit var dbHelper: DBHelper
@@ -40,8 +41,8 @@ class SetTasksActivity : AppCompatActivity(){
 
         /***
          * <実装メモ>
-         * ユーザーがよく使うタスクは保存しておき、入力しやすくする
-         * 周期的なタスクはテンプレート化する(平日はこう、土日はこう、など) <-- そのためにDB再設計
+         *     ユーザーがよく使うタスクは保存しておき、入力しやすくする <-- showTaskDetailsで処理？
+         *     周期的なタスクはテンプレート化する(平日はこう、土日はこう、など) <-- そのためにDB再設計
          *
          */
 
@@ -58,6 +59,12 @@ class SetTasksActivity : AppCompatActivity(){
         val dialogView = layoutInflater.inflate(R.layout.dialog_add_tasks, null)
         val taskNameEditText = dialogView.findViewById<EditText>(R.id.taskNameEditText)
         val taskDescriptionEditText = dialogView.findViewById<EditText>(R.id.taskDescriptionEditText)
+        val repeatSpinner = dialogView.findViewById<AppCompatSpinner>(R.id.repeat_spinner)
+
+        // spinner 参考: https://qiita.com/kenmaeda51415/items/b5abf3fe92d5ce349ad9
+        val repeatDay = arrayOf("繰り返さない", "特定の曜日")
+        val arrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, repeatDay)
+        repeatSpinner.adapter = arrayAdapter
 
         AlertDialog.Builder(this)
             .setTitle("タスクを追加")
@@ -65,6 +72,14 @@ class SetTasksActivity : AppCompatActivity(){
             .setPositiveButton("保存") { _, _ ->
                 val taskName = taskNameEditText.text.toString()
                 val taskDescription = taskDescriptionEditText.text.toString()
+                val repeat = repeatSpinner.selectedItem.toString()
+
+                /**
+                 * <実装メモ>
+                 *     周期的なタスクの自動入力 -> 一度に全部処理するわけにはいかない？
+                 *     特定の曜日を選べるようにする
+                 *     繰り返し設定の選択を工夫する
+                 * */
 
                 if (taskName.isNotEmpty()) {
                     saveTask(taskName, taskDescription)
@@ -108,6 +123,7 @@ class SetTasksActivity : AppCompatActivity(){
         }
     }
 
+    // 選択されたタスクの詳細を表示
     private fun showTaskDetails(task: Task) {
         AlertDialog.Builder(this)
             .setTitle(task.taskName)
@@ -140,7 +156,6 @@ class SetTasksActivity : AppCompatActivity(){
     }
 }
 
-// Taskデータクラス
 data class Task(
     val id: Int,
     val taskName: String,

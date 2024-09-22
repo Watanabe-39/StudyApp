@@ -33,11 +33,11 @@ class DBHelper(
         private const val SQL_CREATE_STUDY_TABLE_TEMPLATE = """
             CREATE TABLE IF NOT EXISTS %s (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                study_date TEXT DEFAULT (date(datetime('now', '+9 hours'), 'localtime')),
+                study_date TEXT,
                 total_minutes INTEGER
             )
         """
-        // 時間がちょっとずれる?
+        // 時間がちょっとずれる -> 日付はKotlinで取得するようにした
     }
 
     override fun onCreate(db: SQLiteDatabase) {
