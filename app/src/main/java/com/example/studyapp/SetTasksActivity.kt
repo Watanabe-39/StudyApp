@@ -115,6 +115,10 @@ class SetTasksActivity : AppCompatActivity(){
     // 選択された日のタスク一覧を表示
     private fun updateTaskList(date: String) {
         val tasks = getTasksForDate(date)
+
+        println("##$date")
+        println("##$tasks")
+
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, tasks.map { it.toString() })
         taskListView.adapter = adapter
 
@@ -134,6 +138,7 @@ class SetTasksActivity : AppCompatActivity(){
     }
 
     // 選択された日のタスク一覧を取得
+    // 注意: 日付はゼロ埋めしないこと
     private fun getTasksForDate(selectDate: String): List<Task> {
         val db = dbHelper.readableDatabase
         val tasks = mutableListOf<Task>()

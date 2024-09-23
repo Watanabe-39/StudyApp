@@ -17,6 +17,7 @@ import java.util.Date
 class TodoActivity : AppCompatActivity() {
     // データベース管理クラスのインスタンス
     private lateinit var databaseManager: DatabaseManager
+    private lateinit var dbHelper: DBHelper
     // ToDoリストを表示するためのアダプター
     private lateinit var todoListAdapter: ArrayAdapter<String>
 
@@ -44,6 +45,7 @@ class TodoActivity : AppCompatActivity() {
 
         // データベースマネージャーの初期化
         databaseManager = DatabaseManager.getInstance(this)
+        dbHelper = DBHelper(this, "study_app.db", 1)
 
         // タスクリストの取得と表示
         refreshTaskList()
@@ -93,35 +95,19 @@ class TodoActivity : AppCompatActivity() {
 
     // タスクリストの更新と表示
     private fun refreshTaskList() {
-        val tasks = getTasks()
-        todoListAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, tasks)
-        todoListView.adapter = todoListAdapter
-    }
-
-    // データベースからタスクを取得
-    // 正しく動作しない
-    private fun getTasks(): List<String> {
-        val tasks = mutableListOf<String>()
-
         val currentDate = LocalDate.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val formatter = DateTimeFormatter.ofPattern("yyyy-M-d")  // 月と日を一桁にする
         val formattedDate = currentDate.format(formatter)
 
-        val db = databaseManager.openDatabase()
-        db.use {
-            val cursor = db.rawQuery("SELECT task_name FROM tasks WHERE date = ?", arrayOf(formattedDate))
-            cursor.use { cur ->
-                val taskNameIndex = cur.getColumnIndexOrThrow("task_name")
-                while (cur.moveToNext()) {
-                    val taskName = cur.getString(taskNameIndex)
-                    tasks.add(taskName)
-                }
-            }
-        }
+        println("##$formattedDate")
 
-        return tasks
+        val tasks = getTasksForDate(formattedDate.toString())
+
+        println("##$tasks")
+
+        todoListAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, tasks.map {it.toString()})
+        todoListView.adapter = todoListAdapter
     }
-
 
     // データベースにタスクを挿入
     private fun insertTask(task: String) {
@@ -131,6 +117,30 @@ class TodoActivity : AppCompatActivity() {
             }
             db.insert("tasks", null, values)
         }
+    }
+
+    // 選択された日のタスク一覧を取得
+    // 注意: 日付はゼロ埋めしないこと
+    private fun getTasksForDate(selectDate: String): List<Task> {
+        val db = dbHelper.readableDatabase
+        val tasks = mutableListOf<Task>()
+
+        val cursor = db.rawQuery(
+            "SELECT * FROM tasks WHERE date=?",
+            arrayOf(selectDate)
+        )
+
+        while (cursor.moveToNext()) {
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+            val taskName = cursor.getString(cursor.getColumnIndexOrThrow("task_name"))
+            val description = cursor.getString(cursor.getColumnIndexOrThrow("description"))
+            val date = cursor.getString(cursor.getColumnIndexOrThrow("date"))
+
+            tasks.add(Task(id, taskName, description, date))
+        }
+        cursor.close()
+
+        return tasks
     }
 
     // アクティビティ破棄時にデータベース接続を閉じる
