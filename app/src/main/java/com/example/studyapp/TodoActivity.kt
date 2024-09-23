@@ -9,10 +9,8 @@ import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Date
 
 class TodoActivity : AppCompatActivity() {
     // データベース管理クラスのインスタンス
@@ -47,6 +45,8 @@ class TodoActivity : AppCompatActivity() {
         databaseManager = DatabaseManager.getInstance(this)
         dbHelper = DBHelper(this, "study_app.db", 1)
 
+        postponeIncompleteTasks()
+
         // タスクリストの取得と表示
         refreshTaskList()
 
@@ -75,7 +75,6 @@ class TodoActivity : AppCompatActivity() {
             selectedTask = todoListAdapter.getItem(position)
             Toast.makeText(this, "$selectedTask を選択しました", Toast.LENGTH_SHORT).show()
         }
-
     }
 
     private fun deleteTask(task: String) {
@@ -107,6 +106,27 @@ class TodoActivity : AppCompatActivity() {
 
         todoListAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, tasks.map {it.toString()})
         todoListView.adapter = todoListAdapter
+    }
+
+    // 前の日に未完了のタスクを今日に繰越す
+    private fun postponeIncompleteTasks() {
+        val db = dbHelper.writableDatabase
+
+        val yesterday = LocalDate.now().minusDays(1)
+        val today = LocalDate.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-M-d")
+        val formattedYesterday = yesterday.format(formatter)
+        val formattedToday = today.format(formatter)
+
+        val yesterdayTasks = getTasksForDate(formattedYesterday)
+        if (yesterdayTasks.isNotEmpty()) {
+            db.execSQL("UPDATE tasks SET date=? WHERE date=?", arrayOf(formattedToday, formattedYesterday))
+            println("##タスクを繰り越した")
+            Toast.makeText(this, "昨日完了されなかったタスクを今日に繰り越しました", Toast.LENGTH_LONG).show()
+        }
+        else {
+            println("##タスクの繰り越しなし")
+        }
     }
 
     // データベースにタスクを挿入
