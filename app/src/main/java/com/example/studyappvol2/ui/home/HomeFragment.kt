@@ -1,47 +1,47 @@
-package com.example.studyapp
+package com.example.studyappvol2.ui.home
 
-import android.annotation.SuppressLint
-import android.content.Entity
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ListView
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import android.widget.ArrayAdapter
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.example.studyappvol2.R
+import com.example.studyappvol2.database.DBHelper
+import com.example.studyappvol2.databinding.FragmentHomeBinding
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import java.sql.Time
-import java.util.Calendar
-import java.util.Date
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
-import com.github.mikephil.charting.data.Entry
-//import java.security.KeyStore.Entry
 
-class MainActivity : AppCompatActivity() {
+class HomeFragment : Fragment() {
     private lateinit var dbHelper: DBHelper
-
     private lateinit var studyTimeLineChart: LineChart
 
-    @SuppressLint("MissingInflatedId")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+    private var _binding: FragmentHomeBinding? = null
 
-        dbHelper = DBHelper(this, "study_app.db", 1)
-        studyTimeLineChart = findViewById(R.id.study_time_lineChart)
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val homeViewModel =
+            ViewModelProvider(this).get(HomeViewModel::class.java)
+
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+
+        dbHelper = DBHelper(requireContext(), "study_app.db", 1)
+        studyTimeLineChart = root.findViewById(R.id.study_time_lineChart)
 
         // グラフの大きさを調節
         val params = studyTimeLineChart.layoutParams
@@ -52,24 +52,7 @@ class MainActivity : AppCompatActivity() {
 
         showStudyTimeChart()
 
-        // Screen transition
-        val todo_navigate_btn = findViewById<Button>(R.id.todo_navigate_button)
-        val scadule_navigate_btn = findViewById<Button>(R.id.scadule_navigate_button)
-        val study_time_navigate_btn = findViewById<Button>(R.id.study_time_navigate_button)
-
-        todo_navigate_btn.setOnClickListener{
-            val intent = Intent(this, TodoActivity::class.java)
-            startActivity(intent)
-        }
-        scadule_navigate_btn.setOnClickListener {
-            val intent = Intent(this, ScheduleActivity::class.java)
-            startActivity(intent)
-        }
-        study_time_navigate_btn.setOnClickListener {
-            val intent = Intent(this, StudyTimeActivity::class.java)
-            startActivity(intent)
-        }
-
+        return root
     }
 
     // 直近1週間の勉強時間の折れ線グラフを表示する
@@ -129,4 +112,8 @@ class MainActivity : AppCompatActivity() {
         return dates.reversed() // 昨日から今日の順にするために逆順にする
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

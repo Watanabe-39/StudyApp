@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/title_home" />
+
+    <item
+        android:id="@+id/navigation_to_do_list"
+        android:icon="@drawable/baseline_task_24"
+        android:title="@string/title_to_do_list" />
+
+    <item
+        android:id="@+id/navigation_study_time"
+        android:icon="@drawable/baseline_access_time_24"
+        android:title="@string/title_study_time" />
+
+    <item
+        android:id="@+id/navigation_schedule"
+        android:icon="@drawable/baseline_calendar_month_24"
+        android:title="@string/title_schedule"/>
+
+</menu>

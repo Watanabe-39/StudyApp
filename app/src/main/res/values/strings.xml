@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Study App</string>
+    <string name="title_home">Home</string>
+    <string name="title_to_do_list">To Do List</string>
+    <string name="title_study_time">Study Time</string>
+    <string name="title_schedule">Schedule</string>
 </resources>

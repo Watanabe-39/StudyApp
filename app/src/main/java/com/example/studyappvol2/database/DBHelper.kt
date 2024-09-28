@@ -1,4 +1,4 @@
-package com.example.studyapp
+package com.example.studyappvol2.database
 
 import android.content.Context
 import android.database.Cursor

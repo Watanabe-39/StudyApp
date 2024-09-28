@@ -1,27 +1,35 @@
-package com.example.studyapp
+package com.example.studyappvol2.ui.schedule
 
 import android.app.AlertDialog
 import android.content.ContentValues
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import com.example.studyappvol2.R
+import com.example.studyappvol2.database.DBHelper
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ScheduleActivity : AppCompatActivity() {
+class ScheduleFragment : Fragment() {
+
     private lateinit var dbHelper: DBHelper
     private var selectedDate: String = ""
     private lateinit var eventListView: ListView
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_schedule)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_schedule, container, false)
 
-        dbHelper = DBHelper(this, "study_app.db", 1)
+        dbHelper = DBHelper(requireContext(), "study_app.db", 1)
 
-        val calendarView = findViewById<CalendarView>(R.id.calendarView)
-        val addEventButton = findViewById<Button>(R.id.addEventButton)
-        eventListView = findViewById(R.id.eventListView)
+        val calendarView = view.findViewById<CalendarView>(R.id.calendarView)
+        val addEventButton = view.findViewById<Button>(R.id.addEventButton)
+        eventListView = view.findViewById(R.id.eventListView)
 
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             selectedDate = "$year-${month + 1}-$dayOfMonth"
@@ -36,6 +44,8 @@ class ScheduleActivity : AppCompatActivity() {
         val calendar = Calendar.getInstance()
         selectedDate = SimpleDateFormat("yyyy-M-d", Locale.getDefault()).format(calendar.time)
         updateEventList(selectedDate)
+
+        return view
     }
 
     private fun showAddEventDialog() {
@@ -45,7 +55,7 @@ class ScheduleActivity : AppCompatActivity() {
         val startTimeEditText = dialogView.findViewById<EditText>(R.id.startTimeEditText)
         val endTimeEditText = dialogView.findViewById<EditText>(R.id.endTimeEditText)
 
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(requireContext())
             .setTitle("イベントを追加")
             .setView(dialogView)
             .setPositiveButton("保存") { _, _ ->
@@ -58,7 +68,7 @@ class ScheduleActivity : AppCompatActivity() {
                     saveEvent(eventName, eventDescription, startTime, endTime)
                     updateEventList(selectedDate)
                 } else {
-                    Toast.makeText(this, "すべての必須フィールドを入力してください", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "すべての必須フィールドを入力してください", Toast.LENGTH_SHORT).show()
                 }
             }
             .setNegativeButton("キャンセル", null)
@@ -77,9 +87,9 @@ class ScheduleActivity : AppCompatActivity() {
 
         val newRowId = db.insert("events", null, values)
         if (newRowId != -1L) {
-            Toast.makeText(this, "イベントが保存されました", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "イベントが保存されました", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "イベントの保存に失敗しました", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "イベントの保存に失敗しました", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -116,7 +126,7 @@ class ScheduleActivity : AppCompatActivity() {
 
     private fun updateEventList(date: String) {
         val events = getEventsForDate(date)
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, events.map { it.toString() })
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, events.map { it.toString() })
         eventListView.adapter = adapter
 
         eventListView.setOnItemClickListener { _, _, position, _ ->
@@ -126,7 +136,7 @@ class ScheduleActivity : AppCompatActivity() {
     }
 
     private fun showEventDetails(event: Event) {
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(requireContext())
             .setTitle(event.eventName)
             .setMessage("日付: ${event.eventDate}\n開始時間: ${event.startTime}\n終了時間: ${event.endTime}\n説明: ${event.description}")
             .setPositiveButton("閉じる", null)
