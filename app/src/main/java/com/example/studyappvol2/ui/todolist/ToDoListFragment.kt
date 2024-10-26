@@ -1,7 +1,6 @@
-package com.example.studyappvol2.ui.dashboard
+package com.example.studyappvol2.ui.todolist
 
 import android.content.ContentValues
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +9,6 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -42,8 +40,8 @@ class ToDoListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val dashboardViewModel =
-            ViewModelProvider(this).get(DashboardViewModel::class.java)
+        val toDoListViewModel =
+            ViewModelProvider(this).get(ToDoListViewModel::class.java)
 
         _binding = FragmentToDoListBinding.inflate(inflater, container, false)
         val root: View = binding.root

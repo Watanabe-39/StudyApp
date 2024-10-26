@@ -13,13 +13,13 @@
 
     <fragment
         android:id="@+id/navigation_to_do_list"
-        android:name="com.example.studyappvol2.ui.dashboard.ToDoListFragment"
+        android:name="com.example.studyappvol2.ui.todolist.ToDoListFragment"
         android:label="@string/title_to_do_list"
         tools:layout="@layout/fragment_to_do_list" />
 
     <fragment
         android:id="@+id/navigation_study_time"
-        android:name="com.example.studyappvol2.ui.notifications.StudyTimeFragment"
+        android:name="com.example.studyappvol2.ui.studytime.StudyTimeFragment"
         android:label="@string/title_study_time"
         tools:layout="@layout/fragment_study_time" />
 
