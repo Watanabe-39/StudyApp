@@ -1,27 +1,15 @@
 package com.example.studyappvol2
 
-import android.graphics.Color
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.ViewGroup
-import android.widget.Button
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.studyappvol2.database.DBHelper
 import com.example.studyappvol2.databinding.ActivityMainBinding
-import com.example.studyappvol2.ui.dashboard.ToDoListFragment
-import com.example.studyappvol2.ui.notifications.StudyTimeFragment
-import com.example.studyappvol2.ui.schedule.ScheduleFragment
-import com.github.mikephil.charting.charts.LineChart
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 

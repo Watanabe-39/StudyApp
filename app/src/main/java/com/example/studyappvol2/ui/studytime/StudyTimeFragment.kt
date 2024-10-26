@@ -1,4 +1,4 @@
-package com.example.studyappvol2.ui.notifications
+package com.example.studyappvol2.ui.studytime
 
 import android.app.AlertDialog
 import android.content.ContentValues

@@ -49,8 +49,9 @@ class HomeFragment : Fragment() {
         params.width = ViewGroup.LayoutParams.MATCH_PARENT // 幅を親ビューに合わせる
         studyTimeLineChart.layoutParams = params
 
-
         showStudyTimeChart()
+
+        evaluate(2)
 
         return root
     }
@@ -59,7 +60,7 @@ class HomeFragment : Fragment() {
     // 参考: https://appdev-room.com/android-mpandroidchart
     // https://re-engines.com/2019/03/11/kotlin-mpandroidchart%E3%83%A9%E3%82%A4%E3%83%96%E3%83%A9%E3%83%AA%E3%82%92%E4%BD%BF%E3%81%84%E7%A7%BB%E5%8B%95%E5%B9%B3%E5%9D%87%E7%B7%9A%E3%82%92%E6%8F%8F%E7%94%BB%E3%81%97%E3%81%A6%E3%81%BF/
     private fun showStudyTimeChart() {
-        val dateList = getLastWeekDates()
+        val dateList = getWeekDates(true)
         val Timedata: MutableList<Float> = mutableListOf()
 
         // それぞれの日の総勉強時間を取得
@@ -97,20 +98,67 @@ class HomeFragment : Fragment() {
         studyTimeLineChart.invalidate() // グラフを更新
     }
 
-
-    // 今日から直近の１週間の日付を取得
-    private fun getLastWeekDates(): List<String> {
+    /**
+     * １週間の日付を返す関数
+     * 引数: 今日から(true)か、昨日から(false)
+     * */
+    private fun getWeekDates(startFromToday: Boolean): List<String> {
         val calendar = Calendar.getInstance()
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) // 日付フォーマットの定義
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val dates = mutableListOf<String>()
 
+        // startFromToday が false の場合、開始日を昨日にする
+        if (!startFromToday) {
+            calendar.add(Calendar.DAY_OF_MONTH, -1)
+        }
+
+        // 7日分の日付を取得
         for (i in 0..6) {
-            dates.add(dateFormat.format(calendar.time)) // 日付を yyyy-MM-dd 形式でフォーマット
+            dates.add(dateFormat.format(calendar.time))
             calendar.add(Calendar.DAY_OF_MONTH, -1) // 日付を1日戻す
         }
 
         return dates.reversed() // 昨日から今日の順にするために逆順にする
     }
+
+    // 学習の取り組みを評価する関数
+    // 引数: 学年(Int)
+    private fun evaluate(schoolYear: Int) {
+        var StudyTimeEvaluation = true
+        var SleepTimeEvaluation = true
+        var PlanningEvaluation = true
+
+        val dateList = getWeekDates(false)  // 先週の日付を取得
+        val Timedata: MutableList<Float> = mutableListOf()  // 各日の勉強時間
+        dateList.forEachIndexed { index, date ->
+            val t = dbHelper.getStudyTimeP(date).toFloat()
+            Timedata.add(t)
+        }
+
+        // 勉強時間を評価
+        var totalTime = 0.0
+        Timedata.forEachIndexed {index, time ->
+            totalTime += time
+        }
+        val avgTime = totalTime / 7
+
+        // 勉強時間の評価基準は仮
+        if (schoolYear == 1 && avgTime < 90) StudyTimeEvaluation = false
+        if (schoolYear == 2 && avgTime < 240) StudyTimeEvaluation = false
+        if (schoolYear == 3 && avgTime < 420) StudyTimeEvaluation = false
+
+        println("###study time: $Timedata")
+        println("###average time: $avgTime")
+        println("###evaluate: $StudyTimeEvaluation")
+
+        // 睡眠時間を評価
+
+
+        // 計画を評価
+
+
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
