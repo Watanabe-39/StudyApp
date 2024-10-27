@@ -11,4 +11,84 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+    <TableLayout
+        android:id="@+id/last_week_study_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/study_time_lineChart"
+        android:layout_marginTop="30dp">
+        <TableRow>
+            <TextView
+                android:text="先週の合計勉強時間: "/>
+            <TextView
+                android:id="@+id/total_study_time"
+                android:text="100"
+                />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:text="1日の平均勉強時間: "/>
+            <TextView
+                android:id="@+id/avg_study_time"
+                android:text=""/>
+        </TableRow>
+    </TableLayout>
+
+
+    <TableLayout
+        android:id="@+id/study_evaluate_table"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:stretchColumns="1"
+        app:layout_constraintTop_toBottomOf="@+id/last_week_study_time"
+        android:layout_marginTop="25dp"
+        >
+
+        <!-- ヘッダー行 -->
+        <TableRow>
+            <TextView
+                android:text="項目"
+                android:padding="8dp"
+                android:textStyle="bold" />
+            <TextView
+                android:text="評価"
+                android:padding="8dp"
+                android:textStyle="bold" />
+
+        </TableRow>
+
+        <!-- データ行 -->
+        <TableRow>
+            <TextView
+                android:text="勉強時間"
+                android:padding="8dp" />
+            <TextView
+                android:id="@+id/evaluate_study_time"
+                android:text="Good!"
+                android:padding="8dp" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="睡眠時間"
+                android:padding="8dp" />
+            <TextView
+                android:id="@+id/evaluate_sleep_time"
+                android:text="Good!"
+                android:padding="8dp" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="計画"
+                android:padding="8dp" />
+            <TextView
+                android:id="@+id/evaluate_planning"
+                android:text="Good!"
+                android:padding="8dp" />
+        </TableRow>
+
+    </TableLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

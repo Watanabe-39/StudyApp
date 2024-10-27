@@ -23,6 +23,12 @@ class HomeFragment : Fragment() {
     private lateinit var dbHelper: DBHelper
     private lateinit var studyTimeLineChart: LineChart
 
+    private lateinit var evalStudyTime: TextView
+    private lateinit var evalSleep: TextView
+    private lateinit var evalPlan: TextView
+    private lateinit var lastWeekTotalStudyTime: TextView
+    private lateinit var lastWeekAvgStudyTime: TextView
+
     private var _binding: FragmentHomeBinding? = null
 
     // This property is only valid between onCreateView and
@@ -41,7 +47,14 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
 
         dbHelper = DBHelper(requireContext(), "study_app.db", 1)
+
+        // UIコンポーネント
         studyTimeLineChart = root.findViewById(R.id.study_time_lineChart)
+        evalStudyTime = root.findViewById(R.id.evaluate_study_time)
+        evalSleep = root.findViewById(R.id.evaluate_sleep_time)
+        evalPlan = root.findViewById(R.id.evaluate_planning)
+        lastWeekTotalStudyTime = root.findViewById(R.id.total_study_time)
+        lastWeekAvgStudyTime = root.findViewById(R.id.avg_study_time)
 
         // グラフの大きさを調節
         val params = studyTimeLineChart.layoutParams
@@ -142,6 +155,9 @@ class HomeFragment : Fragment() {
         }
         val avgTime = totalTime / 7
 
+        lastWeekTotalStudyTime.text = "${totalTime} min"
+        lastWeekAvgStudyTime.text = "${avgTime} min"
+
         // 勉強時間の評価基準は仮
         if (schoolYear == 1 && avgTime < 90) StudyTimeEvaluation = false
         if (schoolYear == 2 && avgTime < 240) StudyTimeEvaluation = false
@@ -157,6 +173,15 @@ class HomeFragment : Fragment() {
         // 計画を評価
 
 
+        // ユーザー側に表示する文字列を返す
+        fun resultString(eval: Boolean) :String {
+            return if (eval) "その調子です！"
+            else "もう少し頑張りましょう"
+        }
+
+        evalStudyTime.text = resultString(StudyTimeEvaluation)
+        evalSleep.text = resultString(SleepTimeEvaluation)
+        evalPlan.text = resultString(PlanningEvaluation)
     }
 
 
