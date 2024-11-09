@@ -1,20 +1,31 @@
 package com.example.studyappvol2.ui.home
 
+import android.Manifest
+import android.app.PendingIntent
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.studyappvol2.R
 import com.example.studyappvol2.database.DBHelper
 import com.example.studyappvol2.databinding.FragmentHomeBinding
+import com.example.studyappvol2.sleepAPI.SleepReceiver
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.google.android.gms.location.ActivityRecognition
+import com.google.android.gms.location.ActivityRecognitionClient
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -28,6 +39,8 @@ class HomeFragment : Fragment() {
     private lateinit var evalPlan: TextView
     private lateinit var lastWeekTotalStudyTime: TextView
     private lateinit var lastWeekAvgStudyTime: TextView
+
+    private lateinit var activityRecognitionClient: ActivityRecognitionClient
 
     private var _binding: FragmentHomeBinding? = null
 
@@ -47,6 +60,7 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
 
         dbHelper = DBHelper(requireContext(), "study_app.db", 1)
+        activityRecognitionClient = ActivityRecognition.getClient(requireContext())
 
         // UIコンポーネント
         studyTimeLineChart = root.findViewById(R.id.study_time_lineChart)

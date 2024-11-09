@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.studyappvol2"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.studyappvol2"
@@ -54,4 +54,5 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.mpandroidchart)
     implementation(libs.play.services.location)
+    implementation(libs.gms.location)
 }

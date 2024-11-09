@@ -15,8 +15,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.studyappvol2.database.DBHelper
 import com.example.studyappvol2.database.DatabaseManager
 import com.example.studyappvol2.databinding.FragmentToDoListBinding
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Date
 
 class ToDoListFragment : Fragment() {
 
@@ -128,9 +130,13 @@ class ToDoListFragment : Fragment() {
     }
 
     private fun insertTask(task: String) {
+        val currentDate = Date()
+        val formatter = SimpleDateFormat("yyyy-MM-dd")
+        val formattedDate = formatter.format(currentDate)
         databaseManager.openDatabase().use { db ->
             val values = ContentValues().apply {
                 put("task_name", task)
+                put("date", formattedDate)
             }
             db.insert("tasks", null, values)
         }

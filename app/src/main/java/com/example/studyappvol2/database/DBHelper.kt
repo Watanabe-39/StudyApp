@@ -38,12 +38,24 @@ class DBHelper(
             )
         """
         // 時間がちょっとずれる -> 日付はKotlinで取得するようにした
+
+//        private const val SQL_CREATE_SLEEP_DATA_TABLE = """
+//            CREATE TABLE sleep_data (
+//                id INTEGER PRIMARY KEY AUTOINCREMENT,
+//                startTimeMillis INTEGER NOT NULL,
+//                endTimeMillis INTEGER NOT NULL,
+//                durationMillis INTEGER NOT NULL,
+//                date TEXT NOT NULL
+//            )
+//        """
+
     }
 
     override fun onCreate(db: SQLiteDatabase) {
         db.apply {
             execSQL(SQL_CREATE_TASKS_TABLE)
             execSQL(SQL_CREATE_EVENTS_TABLE)
+//            execSQL(SQL_CREATE_SLEEP_DATA_TABLE)
         }
     }
 
@@ -51,6 +63,7 @@ class DBHelper(
         db.apply {
             execSQL("DROP TABLE IF EXISTS tasks")
             execSQL("DROP TABLE IF EXISTS events")
+//            execSQL("DROP TABLE IF EXISTS sleep_data")
         }
         onCreate(db)
     }
@@ -65,7 +78,7 @@ class DBHelper(
     // DB内に存在する勉強時間管理テーブルの一覧を取得する
     fun getStudyTables(): List<String> {
         val db = readableDatabase
-        val cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name != 'android_metadata' AND name != 'sqlite_sequence' AND name != 'tasks' AND name != 'events'", null)
+        val cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name != 'android_metadata' AND name != 'sqlite_sequence' AND name != 'tasks' AND name != 'events' AND name != 'sleep_data'", null)
         val tables = mutableListOf<String>()
 
         cursor.use {
@@ -131,11 +144,13 @@ class DBHelper(
                 // カーソルからSUMの結果を取得。getInt(0)は最初の列（SUM結果）を意味する
                 totalTime += cursor.getInt(0)
             }
-            cursor?.close()
+            cursor.close()
         }
 
         return totalTime
     }
+
+    /** 前日の睡眠データを取得* */
 
 }
 

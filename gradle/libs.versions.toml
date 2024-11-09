@@ -1,20 +1,21 @@
 [versions]
-agp = "8.5.1"
+agp = "8.5.2"
 kotlin = "1.9.0"
-coreKtx = "1.13.1"
+coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
-constraintlayout = "2.1.4"
-lifecycleLivedataKtx = "2.8.5"
-lifecycleViewmodelKtx = "2.8.5"
-navigationFragmentKtx = "2.8.0"
-navigationUiKtx = "2.8.0"
+constraintlayout = "2.2.0"
+lifecycleLivedataKtx = "2.8.7"
+lifecycleViewmodelKtx = "2.8.7"
+navigationFragmentKtx = "2.8.3"
+navigationUiKtx = "2.8.3"
 mpandroidchart = "v3.1.0"
-navigationFragment = "2.8.1"
+navigationFragment = "2.8.3"
 playServicesLocation = "21.3.0"
+gms-location = "18.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -31,6 +32,7 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 mpandroidchart = { group = "com.github.PhilJay", name = "mpandroidChart", version.ref = "mpandroidchart" }
 androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+gms-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "gms-location" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
