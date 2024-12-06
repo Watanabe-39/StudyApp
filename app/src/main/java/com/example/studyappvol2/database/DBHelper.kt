@@ -150,6 +150,18 @@ class DBHelper(
         return totalTime
     }
 
+    fun addStudyTime(subject: String, minutes: Int, currentDate: String) {
+        val db = writableDatabase
+        try {
+            // 新しいレコードを直接挿入
+            val insertQuery = "INSERT INTO $subject (study_date, total_minutes) VALUES (?, ?)"
+            db.execSQL(insertQuery, arrayOf(currentDate, minutes))
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+
     /** 前日の睡眠データを取得* */
 
 }
