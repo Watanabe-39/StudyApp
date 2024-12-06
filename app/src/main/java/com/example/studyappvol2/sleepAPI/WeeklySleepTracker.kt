@@ -3,18 +3,21 @@ package com.example.studyappvol2.sleepAPI
 import android.content.Context
 import android.util.Log
 import com.example.studyappvol2.database.DBHelper
-import com.google.android.gms.location.ActivityRecognition
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
+// 1週間分の睡眠データをトラッキングするクラス
 class WeeklySleepTracker(private val context: Context) {
+
+    // データベースヘルパーを初期化
     private val dbHelper = DBHelper(context, "study_app.db", 1)
 
+    // 非同期で1週間分の睡眠時間を計算するメソッド
     suspend fun getWeeklySleepDuration(): Long = withContext(Dispatchers.IO) {
         try {
-            // 現在の時刻を取得
+            // 現在時刻を取得
             val calendar = Calendar.getInstance()
             val endTime = calendar.timeInMillis
 
@@ -26,9 +29,11 @@ class WeeklySleepTracker(private val context: Context) {
             val db = dbHelper.readableDatabase
             var totalSleepMillis = 0L
 
+            // データ取得条件を設定
             val selection = "startTimeMillis >= ? AND endTimeMillis <= ?"
             val selectionArgs = arrayOf(startTime.toString(), endTime.toString())
 
+            // データベースクエリを実行
             db.query(
                 "sleep_data",
                 arrayOf("startTimeMillis", "endTimeMillis"),
@@ -39,17 +44,20 @@ class WeeklySleepTracker(private val context: Context) {
                 "startTimeMillis DESC"
             ).use { cursor ->
                 while (cursor.moveToNext()) {
+                    // 各データセグメントの開始時刻と終了時刻を取得
                     val segmentStart = cursor.getLong(cursor.getColumnIndexOrThrow("startTimeMillis"))
                     val segmentEnd = cursor.getLong(cursor.getColumnIndexOrThrow("endTimeMillis"))
                     totalSleepMillis += segmentEnd - segmentStart
                 }
             }
 
-            Log.d(TAG, "Total sleep time for the week: ${TimeUnit.MILLISECONDS.toHours(totalSleepMillis)} hours")
+            // ログに合計時間を記録
+            Log.d(TAG, "## Total sleep time for the week: ${TimeUnit.MILLISECONDS.toHours(totalSleepMillis)} hours")
             return@withContext totalSleepMillis
 
         } catch (e: Exception) {
-            Log.e(TAG, "Error getting sleep data", e)
+            // エラー発生時のログ
+            Log.e(TAG, "## Error getting sleep data", e)
             throw e
         }
     }

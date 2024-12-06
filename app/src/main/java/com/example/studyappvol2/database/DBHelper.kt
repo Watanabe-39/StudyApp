@@ -1,5 +1,6 @@
 package com.example.studyappvol2.database
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
@@ -39,15 +40,23 @@ class DBHelper(
         """
         // 時間がちょっとずれる -> 日付はKotlinで取得するようにした
 
-//        private const val SQL_CREATE_SLEEP_DATA_TABLE = """
-//            CREATE TABLE sleep_data (
-//                id INTEGER PRIMARY KEY AUTOINCREMENT,
-//                startTimeMillis INTEGER NOT NULL,
-//                endTimeMillis INTEGER NOT NULL,
-//                durationMillis INTEGER NOT NULL,
-//                date TEXT NOT NULL
-//            )
-//        """
+        /** 睡眠時間データ
+         * id: 識別子
+         * startTimeMillis: 睡眠セグメントの開始時刻（ミリ秒）
+         * endTimeMillis: 睡眠セグメントの終了時刻（ミリ秒）
+         * durationMillis: 睡眠時間（ミリ秒、endTimeMillis - startTimeMillis）
+         * confidence: 睡眠セグメントの信頼度（0-100）
+         * insertedAt: データの挿入時刻（タイムスタンプ）
+         */
+        private const val SQL_CREATE_SLEEP_DATA_TABLE = """
+           CREATE TABLE IF NOT EXISTS sleep_data (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                startTimeMillis BIGINT NOT NULL,
+                endTimeMillis BIGINT NOT NULL,
+                durationMillis BIGINT NOT NULL,
+                insertedAt BIGINT NOT NULL
+            )
+        """
 
     }
 
@@ -55,7 +64,7 @@ class DBHelper(
         db.apply {
             execSQL(SQL_CREATE_TASKS_TABLE)
             execSQL(SQL_CREATE_EVENTS_TABLE)
-//            execSQL(SQL_CREATE_SLEEP_DATA_TABLE)
+            execSQL(SQL_CREATE_SLEEP_DATA_TABLE)
         }
     }
 
@@ -63,7 +72,7 @@ class DBHelper(
         db.apply {
             execSQL("DROP TABLE IF EXISTS tasks")
             execSQL("DROP TABLE IF EXISTS events")
-//            execSQL("DROP TABLE IF EXISTS sleep_data")
+            execSQL("DROP TABLE IF EXISTS sleep_data")
         }
         onCreate(db)
     }
@@ -161,8 +170,61 @@ class DBHelper(
         }
     }
 
+    // 睡眠データの挿入
+    fun insertSleepData(
+        startTimeMillis: Long,
+        endTimeMillis: Long,
+        durationMillis: Long,
+    ): Long {
+        val db = writableDatabase
+        val values = ContentValues().apply {
+            put("startTimeMillis", startTimeMillis)
+            put("endTimeMillis", endTimeMillis)
+            put("durationMillis", durationMillis)
+            put("insertedAt", System.currentTimeMillis())
+        }
+        return db.insert("sleep_data", null, values)
+    }
 
-    /** 前日の睡眠データを取得* */
+    /** 特定期間の睡眠データを取得
+     * 引数:
+     *      startTime (Long): 対象期間の開始時刻（ミリ秒単位のタイムスタンプ）
+     *      endTime (Long): 対象期間の終了時刻（ミリ秒単位のタイムスタンプ）
+     * 戻り値: List<SleepSegment>
+     *      データベースから取得した睡眠セグメントをリスト形式で返す
+     *      各要素は以下のプロパティを持つSleepSegmentデータクラスのインスタンスである：
+     *      startTimeMillis: セグメントの開始時刻
+     *      endTimeMillis: セグメントの終了時刻
+     *      durationMillis: セグメントの期間（終了時刻 - 開始時刻）
+     */
+    fun getSleepData(startTime: Long, endTime: Long): List<SleepSegment> {
+        val db = readableDatabase
+        val cursor = db.query(
+            "sleep_data",
+            null,
+            "startTimeMillis >= ? AND endTimeMillis <= ?",
+            arrayOf(startTime.toString(), endTime.toString()),
+            null,
+            null,
+            "startTimeMillis DESC"
+        )
+        val sleepSegments = mutableListOf<SleepSegment>()
+        cursor.use {
+            while (it.moveToNext()) {
+                val start = it.getLong(it.getColumnIndexOrThrow("startTimeMillis"))
+                val end = it.getLong(it.getColumnIndexOrThrow("endTimeMillis"))
+                val duration = it.getLong(it.getColumnIndexOrThrow("durationMillis"))
+                sleepSegments.add(SleepSegment(start, end, duration))
+            }
+        }
+        return sleepSegments
+    }
 
 }
 
+// 睡眠セグメントデータのモデル
+data class SleepSegment(
+    val startTimeMillis: Long,
+    val endTimeMillis: Long,
+    val durationMillis: Long,
+)
